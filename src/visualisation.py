@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib as plt
 
 def visualize_classifier(X, y, scaler, nn):
 
