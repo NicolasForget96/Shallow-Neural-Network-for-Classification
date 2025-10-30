@@ -1,3 +1,5 @@
+import numpy as np
+
 def visualize_classifier(X, y, scaler, nn):
 
     if X.shape[1] != 2:
