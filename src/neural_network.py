@@ -2,12 +2,14 @@ import numpy as np
 from activation import relu, sigmoid
 from math import ceil
 from time import time
+from os import getcwd
+from os.path import join
 
 class NeuralNetwork:
 
-    def __init__(self, nb_units, nb_it=1000, alpha=0.1):
-        np.random.seed(int(time()))
-        #np.random.seed(0)
+    def __init__(self, nb_units=1, nb_it=1000, alpha=0.1):
+        #np.random.seed(int(time()))
+        np.random.seed(0)
 
         self.W1 = np.random.random(size=(1,nb_units))
         self.b1 = np.random.random(size=(nb_units,))
@@ -73,7 +75,7 @@ class NeuralNetwork:
 
         # initialize input and output layers with appropriate dimensions/loss functions
         n = X.shape[1]
-        print_frequency = ceil(self.__nb_iterations / 10)
+        print_frequency = ceil(self.__nb_iterations / 100)
         self.W1 = np.random.random(size=(n, self.__nb_units))
 
         # gradient descent
@@ -105,3 +107,68 @@ class NeuralNetwork:
         m = y.shape[0]
         accuracy = 100 * (m - error_count) / m
         print(f'accuracy on this set: {accuracy:.2f} %')
+
+
+    def save_model(self, file):
+        path = join('saved_models', file)
+        with open(path, 'w+') as f:
+            # write shape
+            f.write(f'{self.W1.shape[0]} {self.W1.shape[1]}\n')
+
+            # write W1
+            for row in self.W1:
+                for elem in row:
+                    f.write(f'{elem} ')
+                f.write('\n')
+            
+            # write b1
+            for elem in self.b1:
+                f.write(f'{elem} ')
+            f.write('\n')
+
+            # write W2
+            for row in self.W2:
+                for elem in row:
+                    f.write(f'{elem} ')
+                f.write('\n')
+            
+            # write b2
+            for elem in self.b2:
+                f.write(f'{elem} ')
+            f.write('\n')
+
+        print('Model saved in ', path)
+
+
+    def load_weights(self, file):
+        path = join('saved_models', file)
+        with open(path, 'r') as f:
+            # read size of the network
+            n, h = map(int, f.readline().strip().split(' '))
+            self.__nb_units = h
+            self.W1 = np.zeros((n, h))
+            self.b1 = np.zeros(h)
+            self.W2 = np.zeros((h, 1))
+            self.b2 = np.zeros(1)
+
+            # read weights hidden layer
+            for i in range(n):
+                l = [float(x) for x in f.readline().strip().split(' ')]
+                self.W1[i, :] = l
+            
+            l = [float(x) for x in f.readline().strip().split(' ')]
+            self.b1 = np.array(l)
+
+            # read weights output layer
+            for i in range(h):
+                l = float(f.readline().strip())
+                self.W2[i, 0] = l
+            self.W2 = np.array(self.W2)
+            
+            l = float(f.readline().strip())
+            self.b2 = np.array(l)
+
+        print(self.W1.shape)
+        print(self.b1.shape)
+        print(self.W2.shape)
+        print(self.b2.shape)

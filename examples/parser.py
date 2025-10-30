@@ -24,7 +24,7 @@ def load_data_tsunami():
     data = pd.read_csv(path)
 
     # Get features and target columns names
-    features = ["latitude", "longitude", 'magnitude', "depth"] 
+    features = ["latitude", "longitude"] 
     target = 'tsunami'
 
     # ---------------------------
@@ -36,6 +36,8 @@ def load_data_tsunami():
     # A gap in the middle values of longitude was visible => added square of longitude to cut around
     #data['longitude_sqr'] = data['longitude']**2
     #features.append('longitude_sqr')
+
+    data = data.iloc[0:100]
 
     return data, features, target
 

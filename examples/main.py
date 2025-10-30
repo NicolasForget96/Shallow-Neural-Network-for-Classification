@@ -1,3 +1,6 @@
+import sys
+sys.path.append('src')
+
 from parser import load_data_tsunami
 from data_generetor import generate_spiral
 from visualisation import visualize_classifier
@@ -13,13 +16,21 @@ X, y = transform_to_numpy(data, features, target)
 #X, y = generate_spiral()
 
 # scale data
-scaler = Scaler()
-scaler.fit(X)
-X_norm = scaler.transform(X)
+sclr = Scaler()
+sclr.fit(X)
+X_norm = sclr.transform(X)
 
 # build neural network
-nn = NeuralNetwork(nb_units=25, nb_it=100000, alpha=0.3)
-nn.fit(X_norm, y)
+save_file = 'tsunami_n-2_h-300.txt'
+nn = NeuralNetwork(nb_units=300, nb_it=1000000)
+#nn.fit(X_norm, y)
+#nn.save_model(save_file)
+nn.load_weights(save_file)
 nn.get_accuracy(X_norm, y)
 
-visualize_classifier(X, y, scaler, nn)
+# load model and predict
+#n2 = NeuralNetwork()
+#n2.load_weights('test.txt')
+#n2.get_accuracy(X_norm, y)
+
+visualize_classifier(X, y, sclr, nn)
