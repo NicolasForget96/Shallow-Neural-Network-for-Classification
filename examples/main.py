@@ -1,5 +1,6 @@
 from parser import load_data_tsunami
-from data_generetor import generate_spiral, visualize_classifier
+from data_generetor import generate_spiral
+from visualisation import visualize_classifier
 from splitter import transform_to_numpy, split_training_validation
 from scaler import Scaler
 from neural_network import NeuralNetwork
