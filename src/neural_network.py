@@ -68,7 +68,7 @@ class NeuralNetwork:
         dW1 = np.dot(X.T, dloss)                                    # size : n x h
         db1 = np.sum(dloss, axis=0)                                 # size : h x 1
 
-        return dloss, dW1, db1, dW2, db2
+        return dW1, db1, dW2, db2
 
 
     def fit(self, X, y):
@@ -81,14 +81,7 @@ class NeuralNetwork:
         # gradient descent
         for it in range(self.__nb_iterations):
             self.forward_propagation(X)
-            dloss, dW1, db1, dW2, db2 = self.back_propagation(X, y)
-
-            if it < 0:
-                print(f'\n\n ---------------- it {it} ----------------')
-                print(self.A1)
-                print('\n', self.A2)
-
-                print('\nd = ', dloss)
+            dW1, db1, dW2, db2 = self.back_propagation(X, y)
 
             self.W1 = self.W1 - self.__alpha * dW1
             self.b1 = self.b1 - self.__alpha * db1
@@ -167,8 +160,3 @@ class NeuralNetwork:
             
             l = float(f.readline().strip())
             self.b2 = np.array(l)
-
-        print(self.W1.shape)
-        print(self.b1.shape)
-        print(self.W2.shape)
-        print(self.b2.shape)
