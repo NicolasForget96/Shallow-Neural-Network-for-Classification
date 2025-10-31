@@ -24,7 +24,7 @@ def load_data_tsunami():
     data = pd.read_csv(path)
 
     # Get features and target columns names
-    features = ["latitude", "longitude"] 
+    features = ["longitude", "latitude", "depth", "magnitude"] 
     target = 'tsunami'
 
     # ---------------------------
