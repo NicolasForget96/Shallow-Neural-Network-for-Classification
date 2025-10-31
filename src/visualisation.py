@@ -28,7 +28,7 @@ def visualize_classifier(X, y, scaler, nn):
     plt.show()
 
 
-def visualize_tensorflow_classifier(X, y, model):
+def visualize_tensorflow_classifier(X, y, sclr, model):
 
     if X.shape[1] != 2:
         print(f'Cannot plot higher dimensional classifiers (2d max).')
@@ -43,6 +43,7 @@ def visualize_tensorflow_classifier(X, y, model):
                      np.arange(y_min, y_max, h))
     
     X_mesh = np.c_[xx.ravel(), yy.ravel()]
+    X_mesh = sclr.transform(X_mesh)
     Z = model.predict(X_mesh)
     Z[Z >= 0.5] = 1
     Z[Z < 0.5] = 0

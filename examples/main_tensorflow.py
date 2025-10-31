@@ -43,4 +43,4 @@ accuracy = (m - np.sum(np.abs(y_pred - y)))/m
 print(f'accuracy: {accuracy}')
 
 # visualize
-visualize_tensorflow_classifier(X, y, model)
+visualize_tensorflow_classifier(X, y, sclr, model)
