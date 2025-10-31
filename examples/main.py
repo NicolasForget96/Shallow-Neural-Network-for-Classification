@@ -4,7 +4,7 @@ sys.path.append('src')
 from parser import load_data_tsunami
 from data_generetor import generate_spiral
 from visualisation import visualize_classifier
-from splitter import transform_to_numpy, split_training_validation
+from splitter import transform_to_numpy
 from scaler import Scaler
 from neural_network import NeuralNetwork
 
