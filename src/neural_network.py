@@ -1,5 +1,5 @@
 import numpy as np
-from activation import relu, sigmoid
+from activation import *
 from math import ceil
 from time import time
 from os import getcwd
@@ -7,7 +7,7 @@ from os.path import join
 
 class NeuralNetwork:
 
-    def __init__(self, nb_units=1, nb_it=1000, alpha=0.1):
+    def __init__(self, nb_units=1, nb_it=1000, alpha=0.1, output='sigmoid'):
         #np.random.seed(int(time()))
         np.random.seed(0)
 
@@ -20,6 +20,13 @@ class NeuralNetwork:
         self.__nb_units = nb_units
         self.__nb_iterations = nb_it
         self.__alpha = alpha
+        self.__output = output
+
+        if self.__output == 'sigmoid':
+            self.loss = binary_cross_entropy
+            self.loss_derivative = binary_cross_entropy_derivative
+        else:
+            print('Warning: output layer activation function not supported. Defaulted to ... [toDo].')
         
 
     def forward_propagation(self, X):
@@ -38,23 +45,13 @@ class NeuralNetwork:
         proba[proba < 0.5] = 0
 
         return proba
-
-
-    def compute_loss(self, y_pred, y):
-        m = y.shape[0]
-        loss = -y * np.log(y_pred) - (1-y) * np.log(1-y_pred)
-        
-        return  np.sum(loss)/m
-
+    
 
     def back_propagation(self, X, y):
         m = X.shape[0]
 
-        # compute the gradient for the loss based on last layer
-        dloss = (1/m) * (self.A2-y) / (self.A2*(1-self.A2))         # size : m x 1
-
-        # backprop the sigmoid activation
-        dloss = dloss * sigmoid(self.Z2) * (1 - sigmoid(self.Z2))   # size : m x 1
+        # compute the gradient for the loss based on last layer (including activation function to improve numerical stability)
+        dloss = self.loss_derivative(self.A2, y)                    # size : m x 1
 
         # output layer derivatives
         dW2 = np.dot(self.A1.T, dloss)                              # size : h x 1
@@ -90,7 +87,7 @@ class NeuralNetwork:
             self.b2 = self.b2 - self.__alpha * db2
 
             if it % print_frequency == 0:
-                print(f"  -> iteration {it}, cost {self.compute_loss(self.A2, y):.4f}")
+                print(f"  -> iteration {it}, cost {self.loss(self.A2, y):.4f}")
 
 
     def get_accuracy(self, X, y):
