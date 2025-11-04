@@ -1,5 +1,10 @@
+import sys
+sys.path.append('src')
+
 import numpy as np
 import matplotlib.pyplot as plt
+from encoding import one_hot_decode
+
 
 def visualize_classifier(X, y, scaler, nn):
 
@@ -18,6 +23,8 @@ def visualize_classifier(X, y, scaler, nn):
     X_mesh = np.c_[xx.ravel(), yy.ravel()]
     X_mesh_norm = scaler.transform(X_mesh)
     Z = nn.predict(X_mesh_norm)
+    Z = one_hot_decode(Z)
+    print(Z)
     Z = Z.reshape(xx.shape)
 
     plt.figure()

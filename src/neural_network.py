@@ -4,6 +4,7 @@ from math import ceil
 from time import time
 from os import getcwd
 from os.path import join
+from encoding import one_hot_decode, one_hot_encode
 
 class NeuralNetwork:
 
@@ -25,25 +26,45 @@ class NeuralNetwork:
         if self.__output == 'sigmoid':
             self.loss = binary_cross_entropy
             self.loss_derivative = binary_cross_entropy_derivative
+            self.output_activation = sigmoid
+        elif self.__output == 'softmax':
+            self.loss = cross_entropy
+            self.loss_derivative = cross_entropy_derivative
+            self.output_activation = softmax
         else:
             print('Warning: output layer activation function not supported. Defaulted to ... [toDo].')
         
+    def __resize_network(self, X, y):
+        n = X.shape[1]
+        c = y.shape[1]
+        self.W1 = np.random.random(size=(n, self.__nb_units))
+        self.W2 = np.random.random(size=(self.__nb_units, c))
+        self.b2 = np.random.random(size=(c,))
+
 
     def forward_propagation(self, X):
         self.Z1 = np.dot(X, self.W1) + self.b1          # size : m x h
         self.A1 = relu(self.Z1)                         # size : m x h
         self.Z2 = np.dot(self.A1, self.W2) + self.b2    # size : m x 1
-        self.A2 = sigmoid(self.Z2)                      # size : m x 1    
+        self.A2 = self.output_activation(self.Z2)       # size : m x 1   
 
 
     def predict(self, X):
         self.forward_propagation(X)
         proba = self.A2
-        proba[proba >= 0.5] = 1
-        proba[proba < 0.5] = 0
 
-        return proba
+        if self.__output == 'sigmoid':
+            proba[proba >= 0.5] = 1
+            proba[proba < 0.5] = 0
+        
+        elif self.__output == 'softmax':
+            m, c = self.A2.shape
+            proba_max = [np.argmax(proba[i,:]) for i in range(m)]
+            proba = np.zeros((m,c))
+            for i in range(m):
+                proba[i, proba_max[i]] = 1
     
+        return proba
 
     def back_propagation(self, X, y):
         m = X.shape[0]
@@ -69,10 +90,8 @@ class NeuralNetwork:
 
     def fit(self, X, y):
 
-        # initialize input and output layers with appropriate dimensions/loss functions
-        n = X.shape[1]
+        self.__resize_network(X, y)
         print_frequency = ceil(self.__nb_iterations / 10)
-        self.W1 = np.random.random(size=(n, self.__nb_units))
 
         # gradient descent
         for it in range(self.__nb_iterations):
@@ -94,7 +113,9 @@ class NeuralNetwork:
     def get_accuracy(self, X, y):
         self.forward_propagation(X)
         y_pred = self.predict(X)
-        error_count = np.sum(np.abs(y_pred - y))
+        y_cl = one_hot_decode(y)
+        y_pred_cl = one_hot_decode(y_pred)
+        error_count = np.sum(np.abs(y_pred_cl - y_cl))
         m = y.shape[0]
         accuracy = 100 * (m - error_count) / m
         print(f'accuracy on this set: {accuracy:.2f} %')
