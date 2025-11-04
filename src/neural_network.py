@@ -89,6 +89,8 @@ class NeuralNetwork:
             if it % print_frequency == 0:
                 print(f"  -> iteration {it}, cost {self.loss(self.A2, y):.4f}")
 
+        print(f'Final cost on the training set: {self.loss(self.A2, y):.4f}')
+
 
     def get_accuracy(self, X, y):
         self.forward_propagation(X)
