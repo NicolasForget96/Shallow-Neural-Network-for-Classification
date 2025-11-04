@@ -75,7 +75,7 @@ class NeuralNetwork:
 
         # initialize input and output layers with appropriate dimensions/loss functions
         n = X.shape[1]
-        print_frequency = ceil(self.__nb_iterations / 100)
+        print_frequency = ceil(self.__nb_iterations / 10)
         self.W1 = np.random.random(size=(n, self.__nb_units))
 
         # gradient descent
