@@ -33,10 +33,8 @@ class NeuralNetwork:
         self.Z1 = np.dot(X, self.W1) + self.b1          # size : m x h
         self.A1 = relu(self.Z1)                         # size : m x h
         self.Z2 = np.dot(self.A1, self.W2) + self.b2    # size : m x 1
-        self.A2 = sigmoid(self.Z2)                      # size : m x 1
-        self.A2 = np.minimum(self.A2, 0.99999999)       # to avoid division by 0 due to numerical issues in backpropagation
-        self.A2 = np.maximum(self.A2, 0.00000001)       # to avoid division by 0 due to numerical issues in backpropagation
-    
+        self.A2 = sigmoid(self.Z2)                      # size : m x 1    
+
 
     def predict(self, X):
         self.forward_propagation(X)
@@ -50,7 +48,8 @@ class NeuralNetwork:
     def back_propagation(self, X, y):
         m = X.shape[0]
 
-        # compute the gradient for the loss based on last layer (including activation function to improve numerical stability)
+        # compute the gradient for the loss based on last layer
+        # (including activation function to improve numerical stability)
         dloss = self.loss_derivative(self.A2, y)                    # size : m x 1
 
         # output layer derivatives
