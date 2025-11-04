@@ -21,15 +21,15 @@ sclr.fit(X)
 X_norm = sclr.transform(X)
 
 # build neural network
-save_file = 'tsunami_n-2_h-300.txt'
-nn = NeuralNetwork(nb_units=300, nb_it=1000000)
+save_file = 'tsunami_n-4_h-100.txt'
+nn = NeuralNetwork(nb_units=100, nb_it=10000)
 
 # uncomment to train new neural network
-#nn.fit(X_norm, y)
-#nn.save_model(save_file)
+nn.fit(X_norm, y)
+nn.save_model(save_file)
 
 # uncomment to load weigts from existing file
-nn.load_weights(save_file)
+#nn.load_weights(save_file)
 
 # evaluation & visualisation (2d only)
 nn.get_accuracy(X_norm, y)
