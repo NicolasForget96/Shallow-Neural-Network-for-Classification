@@ -25,10 +25,10 @@ def visualize_classifier(X, y, scaler, nn):
     Z = nn.predict(X_mesh_norm)
     Z = one_hot_decode(Z)
     Z = Z.reshape(xx.shape)
-
+    
     plt.figure()
-    plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral, alpha=0.8)
-    plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap=plt.cm.Spectral)
+    plt.contourf(xx, yy, Z, alpha=0.8)
+    plt.scatter(X[:, 0], X[:, 1], c=one_hot_decode(y), s=40, edgecolors='black')
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.show()
@@ -56,8 +56,8 @@ def visualize_tensorflow_classifier(X, y, sclr, model):
     Z = Z.reshape(xx.shape)
 
     plt.figure()
-    plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral, alpha=0.8)
-    plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap=plt.cm.Spectral)
+    plt.contourf(xx, yy, Z, alpha=0.8)
+    plt.scatter(X[:, 0], X[:, 1], c=y, s=40, edgecolors='black')
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.show()
