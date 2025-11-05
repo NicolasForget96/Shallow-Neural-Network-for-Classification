@@ -37,7 +37,7 @@ def load_data_tsunami():
     #data['longitude_sqr'] = data['longitude']**2
     #features.append('longitude_sqr')
 
-    data = data.iloc[0:100]
+    #data = data.iloc[0:100]
 
     return data, features, target
 

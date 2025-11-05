@@ -1,5 +1,6 @@
 import numpy as np
 from math import ceil
+from encoding import one_hot_encode
 
 np.random.seed(0)
 
@@ -8,7 +9,7 @@ def transform_to_numpy(data, features, target):
     y = data[target].to_numpy()
     y = np.reshape(y, (-1,1))
     
-    return X, y
+    return X, one_hot_encode(y)
 
 def split_training_validation(X, y, split=0.8):
     m = X.shape[0]
