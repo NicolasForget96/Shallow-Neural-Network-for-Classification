@@ -24,7 +24,6 @@ def visualize_classifier(X, y, scaler, nn):
     X_mesh_norm = scaler.transform(X_mesh)
     Z = nn.predict(X_mesh_norm)
     Z = one_hot_decode(Z)
-    print(Z)
     Z = Z.reshape(xx.shape)
 
     plt.figure()
