@@ -13,15 +13,18 @@ class NeuralNetwork:
         #np.random.seed(int(time()))
         np.random.seed(0)
 
-        self.W1 = np.random.random(size=(1,nb_units))
-        self.b1 = np.random.random(size=(nb_units,))
-
-        self.W2 = np.random.random(size=(nb_units,1))
-        self.b2 = np.random.random(size=(1,))
+        self.W = [np.random.random(size=(1,nb_units)),
+                  np.random.random(size=(nb_units,1))]
+        self.b = [np.random.random(size=(nb_units,)),
+                  np.random.random(size=(1,))]
+        
+        self.Z = [np.array([]),
+                  np.array([])]
+        self.A = [np.array([]),
+                  np.array([])]
 
         self.__nb_units = nb_units
         self.__nb_iterations = nb_it
-
         self.__optimizer = opt
 
         self.__output = output
@@ -42,28 +45,28 @@ class NeuralNetwork:
     def __resize_network(self, X, y):
         n = X.shape[1]
         c = y.shape[1]
-        self.W1 = np.random.random(size=(n, self.__nb_units))
-        self.W2 = np.random.random(size=(self.__nb_units, c))
-        self.b2 = np.random.random(size=(c,))
+        self.W[0] = np.random.random(size=(n, self.__nb_units))
+        self.W[1] = np.random.random(size=(self.__nb_units, c))
+        self.b[1] = np.random.random(size=(c,))
 
 
     def forward_propagation(self, X):
-        self.Z1 = np.dot(X, self.W1) + self.b1          # size : m x h
-        self.A1 = relu(self.Z1)                         # size : m x h
-        self.Z2 = np.dot(self.A1, self.W2) + self.b2    # size : m x 1
-        self.A2 = self.output_activation(self.Z2)       # size : m x 1   
+        self.Z[0] = np.dot(X, self.W[0]) + self.b[0]                # size : m x h
+        self.A[0] = relu(self.Z[0])                                 # size : m x h
+        self.Z[1] = np.dot(self.A[0], self.W[1]) + self.b[1]     # size : m x 1
+        self.A[1] = self.output_activation(self.Z[1])            # size : m x 1   
 
 
     def predict(self, X):
         self.forward_propagation(X)
-        proba = self.A2
+        proba = self.A[1]
 
         if self.__output == 'sigmoid':
             proba[proba >= 0.5] = 1
             proba[proba < 0.5] = 0
         
         elif self.__output == 'softmax':
-            m, c = self.A2.shape
+            m, c = self.A[1].shape
             proba_max = [np.argmax(proba[i,:]) for i in range(m)]
             proba = np.zeros((m,c))
             for i in range(m):
@@ -76,15 +79,15 @@ class NeuralNetwork:
 
         # compute the gradient for the loss based on last layer
         # (including activation function to improve numerical stability)
-        dloss = self.loss_derivative(self.A2, y)                    # size : m x 1
+        dloss = self.loss_derivative(self.A[1], y)                    # size : m x 1
 
         # output layer derivatives
-        dW2 = np.dot(self.A1.T, dloss)                              # size : h x 1
+        dW2 = np.dot(self.A[0].T, dloss)                              # size : h x 1
         db2 = np.sum(dloss, axis=0)                                 # size : 1 x 1
-        dloss = np.dot(dloss, self.W2.T)                            # size : m x h
+        dloss = np.dot(dloss, self.W[1].T)                            # size : m x h
 
         # backprop the ReLU activation
-        dloss[self.Z1 <= 0] = 0                                     # size : m x h
+        dloss[self.Z[0] <= 0] = 0                                     # size : m x h
 
         # hidden layer derivatives
         dW1 = np.dot(X.T, dloss)                                    # size : n x h
@@ -101,18 +104,18 @@ class NeuralNetwork:
         # gradient descent
         for it in range(self.__nb_iterations):
             self.forward_propagation(X)
-            dW1, db1, dW2, db2 = self.back_propagation(X, y)
+            dW0, db0, dW1, db1 = self.back_propagation(X, y)
 
-            self.W1 = self.__optimizer.update_weights(self.W1, dW1)
-            self.b1 = self.__optimizer.update_weights(self.b1, db1)
+            self.W[0] = self.__optimizer.update_weights(self.W[0], dW0)
+            self.b[0] = self.__optimizer.update_weights(self.b[0], db0)
 
-            self.W2 = self.__optimizer.update_weights(self.W2, dW2)
-            self.b2 = self.__optimizer.update_weights(self.b2, db2)
+            self.W[1] = self.__optimizer.update_weights(self.W[1], dW1)
+            self.b[1] = self.__optimizer.update_weights(self.b[1], db1)
 
             if it % print_frequency == 0:
-                print(f"  -> iteration {it}, cost {self.loss(self.A2, y):.4f}")
+                print(f"  -> iteration {it}, cost {self.loss(self.A[1], y):.4f}")
 
-        print(f'Final cost on the training set: {self.loss(self.A2, y):.4f}')
+        print(f'Final cost on the training set: {self.loss(self.A[1], y):.4f}')
 
 
     def get_accuracy(self, X, y):
@@ -130,27 +133,27 @@ class NeuralNetwork:
         path = join('saved_models', file)
         with open(path, 'w+') as f:
             # write shape
-            f.write(f'{self.W1.shape[0]} {self.W1.shape[1]}\n')
+            f.write(f'{self.W[0].shape[0]} {self.W1.shape[1]}\n')
 
             # write W1
-            for row in self.W1:
+            for row in self.W[0]:
                 for elem in row:
                     f.write(f'{elem} ')
                 f.write('\n')
             
             # write b1
-            for elem in self.b1:
+            for elem in self.b[0]:
                 f.write(f'{elem} ')
             f.write('\n')
 
             # write W2
-            for row in self.W2:
+            for row in self.W[1]:
                 for elem in row:
                     f.write(f'{elem} ')
                 f.write('\n')
             
             # write b2
-            for elem in self.b2:
+            for elem in self.b[1]:
                 f.write(f'{elem} ')
             f.write('\n')
 
@@ -163,24 +166,24 @@ class NeuralNetwork:
             # read size of the network
             n, h = map(int, f.readline().strip().split(' '))
             self.__nb_units = h
-            self.W1 = np.zeros((n, h))
-            self.b1 = np.zeros(h)
-            self.W2 = np.zeros((h, 1))
-            self.b2 = np.zeros(1)
+            self.W[0] = np.zeros((n, h))
+            self.b[0] = np.zeros(h)
+            self.W[1] = np.zeros((h, 1))
+            self.b[1] = np.zeros(1)
 
             # read weights hidden layer
             for i in range(n):
                 l = [float(x) for x in f.readline().strip().split(' ')]
-                self.W1[i, :] = l
+                self.W[0][i, :] = l
             
             l = [float(x) for x in f.readline().strip().split(' ')]
-            self.b1 = np.array(l)
+            self.b[0] = np.array(l)
 
             # read weights output layer
             for i in range(h):
                 l = float(f.readline().strip())
-                self.W2[i, 0] = l
-            self.W2 = np.array(self.W2)
+                self.W[1][i, 0] = l
+            self.W[1] = np.array(self.W[1])
             
             l = float(f.readline().strip())
-            self.b2 = np.array(l)
+            self.b[1] = np.array(l)
