@@ -49,6 +49,7 @@ class NeuralNetwork:
         self.W[0] = np.random.random(size=(n, self.__nb_units))
         self.W[1] = np.random.random(size=(self.__nb_units, c))
         self.b[1] = np.random.random(size=(c,))
+        self.__optimizer.reshape_optimizer(self.W, self.b)
 
 
     def forward_propagation(self, X):
