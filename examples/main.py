@@ -24,7 +24,7 @@ X_norm = sclr.transform(X)
 
 # build neural network
 save_file = 'tsunami_n-4_h-100.txt'
-nn = NeuralNetwork(nb_units=100, nb_it=10000, output='softmax', opt=AdamOptimizer())
+nn = NeuralNetwork(nb_units=100, nb_it=1000, output='softmax', opt=AdamOptimizer())
 
 # uncomment to train new neural network
 nn.fit(X_norm, y)
