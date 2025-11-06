@@ -51,8 +51,8 @@ class NeuralNetwork:
 
 
     def forward_propagation(self, X):
-        self.Z[0] = np.dot(X, self.W[0]) + self.b[0]                # size : m x h
-        self.A[0] = relu(self.Z[0])                                 # size : m x h
+        self.Z[0] = np.dot(X, self.W[0]) + self.b[0]             # size : m x h
+        self.A[0] = relu(self.Z[0])                              # size : m x h
         self.Z[1] = np.dot(self.A[0], self.W[1]) + self.b[1]     # size : m x 1
         self.A[1] = self.output_activation(self.Z[1])            # size : m x 1   
 
@@ -79,21 +79,25 @@ class NeuralNetwork:
 
         # compute the gradient for the loss based on last layer
         # (including activation function to improve numerical stability)
-        dloss = self.loss_derivative(self.A[1], y)                    # size : m x 1
+        dloss = self.loss_derivative(self.A[1], y)      # size : m x 1
 
         # output layer derivatives
-        dW2 = np.dot(self.A[0].T, dloss)                              # size : h x 1
-        db2 = np.sum(dloss, axis=0)                                 # size : 1 x 1
-        dloss = np.dot(dloss, self.W[1].T)                            # size : m x h
+        dW2 = np.dot(self.A[0].T, dloss)                # size : h x 1
+        db2 = np.sum(dloss, axis=0)                     # size : 1 x 1
+        dloss = np.dot(dloss, self.W[1].T)              # size : m x h
 
         # backprop the ReLU activation
-        dloss[self.Z[0] <= 0] = 0                                     # size : m x h
+        dloss[self.Z[0] <= 0] = 0                       # size : m x h
 
         # hidden layer derivatives
-        dW1 = np.dot(X.T, dloss)                                    # size : n x h
-        db1 = np.sum(dloss, axis=0)                                 # size : h x 1
+        dW1 = np.dot(X.T, dloss)                        # size : n x h
+        db1 = np.sum(dloss, axis=0)                     # size : h x 1
 
-        return dW1, db1, dW2, db2
+        # group derivatives
+        dW = [dW1, dW2]
+        db = [db1, db2]
+
+        return dW, db
 
 
     def fit(self, X, y):
@@ -104,13 +108,9 @@ class NeuralNetwork:
         # gradient descent
         for it in range(self.__nb_iterations):
             self.forward_propagation(X)
-            dW0, db0, dW1, db1 = self.back_propagation(X, y)
 
-            self.W[0] = self.__optimizer.update_weights(self.W[0], dW0)
-            self.b[0] = self.__optimizer.update_weights(self.b[0], db0)
-
-            self.W[1] = self.__optimizer.update_weights(self.W[1], dW1)
-            self.b[1] = self.__optimizer.update_weights(self.b[1], db1)
+            dW, db = self.back_propagation(X, y)
+            self.__optimizer.update_weights(self.W, self.b, dW, db)
 
             if it % print_frequency == 0:
                 print(f"  -> iteration {it}, cost {self.loss(self.A[1], y):.4f}")

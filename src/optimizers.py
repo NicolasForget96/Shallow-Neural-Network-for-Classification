@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 # #######################################################
 #               Gradient Descent
@@ -7,10 +8,15 @@ import numpy as np
 class GradientDescent:
 
     def __init__(self, alpha=0.1):
-        self.alpha = alpha
+        self.__alpha = alpha
+        self.t = 0
 
-    def update_weights(self, W, dJ_dW):
-        return W - self.alpha * dJ_dW
+    def update_weights(self, W, b, dW, db):
+        self.t += 1
+        q = len(W)
+        for i in range(q):
+            W[i] = W[i] - self.__alpha * dW[i]
+            b[i] = b[i] - self.__alpha * db[i]
     
 
 # #######################################################
