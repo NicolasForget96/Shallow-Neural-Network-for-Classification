@@ -4,11 +4,12 @@ from math import ceil
 from time import time
 from os import getcwd
 from os.path import join
-from encoding import one_hot_decode, one_hot_encode
+from encoding import one_hot_decode
+from optimizers import GradientDescent
 
 class NeuralNetwork:
 
-    def __init__(self, nb_units=1, nb_it=1000, alpha=0.1, output='sigmoid'):
+    def __init__(self, nb_units=1, nb_it=1000, output='sigmoid', opt=GradientDescent()):
         #np.random.seed(int(time()))
         np.random.seed(0)
 
@@ -20,9 +21,10 @@ class NeuralNetwork:
 
         self.__nb_units = nb_units
         self.__nb_iterations = nb_it
-        self.__alpha = alpha
-        self.__output = output
 
+        self.__optimizer = opt
+
+        self.__output = output
         if self.__output == 'sigmoid':
             self.loss = binary_cross_entropy
             self.loss_derivative = binary_cross_entropy_derivative
@@ -32,7 +34,10 @@ class NeuralNetwork:
             self.loss_derivative = cross_entropy_derivative
             self.output_activation = softmax
         else:
-            print('Warning: output layer activation function not supported. Defaulted to ... [toDo].')
+            print('Warning: output layer activation function not supported. Defaulted to softmax.')
+            self.loss = cross_entropy
+            self.loss_derivative = cross_entropy_derivative
+            self.output_activation = softmax
         
     def __resize_network(self, X, y):
         n = X.shape[1]
@@ -98,11 +103,11 @@ class NeuralNetwork:
             self.forward_propagation(X)
             dW1, db1, dW2, db2 = self.back_propagation(X, y)
 
-            self.W1 = self.W1 - self.__alpha * dW1
-            self.b1 = self.b1 - self.__alpha * db1
+            self.W1 = self.__optimizer.update_weights(self.W1, dW1)
+            self.b1 = self.__optimizer.update_weights(self.b1, db1)
 
-            self.W2 = self.W2 - self.__alpha * dW2
-            self.b2 = self.b2 - self.__alpha * db2
+            self.W2 = self.__optimizer.update_weights(self.W2, dW2)
+            self.b2 = self.__optimizer.update_weights(self.b2, db2)
 
             if it % print_frequency == 0:
                 print(f"  -> iteration {it}, cost {self.loss(self.A2, y):.4f}")
