@@ -115,7 +115,10 @@ class NeuralNetwork:
             if it % print_frequency == 0:
                 print(f"  -> iteration {it}, cost {self.loss(self.A[1], y):.4f}")
 
-        print(f'Final cost on the training set: {self.loss(self.A[1], y):.4f}')
+        final_cost = self.loss(self.A[1], y)
+        print(f'Final cost on the training set: {final_cost:.4f}')
+
+        return final_cost
 
 
     def get_accuracy(self, X, y):
@@ -127,6 +130,7 @@ class NeuralNetwork:
         m = y.shape[0]
         accuracy = 100 * (m - error_count) / m
         print(f'accuracy on this set: {accuracy:.2f} %')
+        return accuracy
 
 
     def save_model(self, file):
