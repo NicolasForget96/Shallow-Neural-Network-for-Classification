@@ -5,11 +5,15 @@ from parser import load_data_tsunami
 from data_generetor import generate_spiral
 from visualisation import visualize_tensorflow_classifier
 from splitter import transform_to_numpy
+from encoding import one_hot_decode
 
 import tensorflow as tf
-from tf_keras import Sequential
-from tf_keras.layers import Dense
-from tf_keras.losses import BinaryCrossentropy
+from keras import Sequential
+from keras.layers import Dense
+from keras.losses import BinaryCrossentropy
+#from tf_keras import Sequential
+#from tf_keras.layers import Dense
+#from tf_keras.losses import BinaryCrossentropy
 import numpy as np
 
 from sklearn.preprocessing import StandardScaler
@@ -17,6 +21,7 @@ from sklearn.preprocessing import StandardScaler
 # load tsunami data
 data, features, target = load_data_tsunami()
 X, y = transform_to_numpy(data, features, target)
+y = one_hot_decode(y)
 
 # load spiral data
 #X, y = generate_spiral()
@@ -28,7 +33,6 @@ X_norm = sclr.fit_transform(X)
 # build and train network
 model = Sequential([
     Dense(units=100, activation='relu'),
-    Dense(units=25, activation='relu'),
     Dense(units=1, activation='sigmoid')
 ])
 model.compile(loss=BinaryCrossentropy())
