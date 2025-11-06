@@ -25,6 +25,7 @@ class NeuralNetwork:
 
         self.__nb_units = nb_units
         self.__nb_iterations = nb_it
+        self.costs = np.zeros(nb_it)
         self.__optimizer = opt
 
         self.__output = output
@@ -108,12 +109,13 @@ class NeuralNetwork:
         # gradient descent
         for it in range(self.__nb_iterations):
             self.forward_propagation(X)
+            self.costs[it] = self.loss(self.A[1], y)
 
             dW, db = self.back_propagation(X, y)
             self.__optimizer.update_weights(self.W, self.b, dW, db)
 
             if it % print_frequency == 0:
-                print(f"  -> iteration {it}, cost {self.loss(self.A[1], y):.4f}")
+                print(f"  -> iteration {it}, cost {self.costs[it]:.4f}")
 
         final_cost = self.loss(self.A[1], y)
         print(f'Final cost on the training set: {final_cost:.4f}')

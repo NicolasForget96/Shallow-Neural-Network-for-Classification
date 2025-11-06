@@ -9,6 +9,8 @@ from visualisation import visualize_classifier
 from splitter import transform_to_numpy
 from scaler import Scaler
 from neural_network import NeuralNetwork
+from optimizers import GradientDescent
+import numpy as np
 
 class TestClass:
     def test_final_cost(self):
@@ -19,8 +21,23 @@ class TestClass:
         sclr.fit(X)
         X_norm = sclr.transform(X)
 
-        nn = NeuralNetwork(nb_units=100, nb_it=10000, output='softmax')
+        nn = NeuralNetwork(nb_units=100, nb_it=10000, output='softmax', opt=GradientDescent(alpha=0.1))
         final_cost = nn.fit(X_norm, y)
         accuracy = nn.get_accuracy(X_norm, y)
 
-        assert final_cost == pytest.approx(0.1617, 0.0001) and accuracy == pytest.approx(93.54, 0.01)
+        assert final_cost == pytest.approx(0.1617, 0.0001)
+        assert accuracy == pytest.approx(93.54, 0.01)
+
+
+    def test_roughly_decreasing_costs(self):
+        data, features, target = load_data_tsunami()
+        X, y = transform_to_numpy(data, features, target)
+
+        sclr = Scaler()
+        sclr.fit(X)
+        X_norm = sclr.transform(X)
+
+        nn = NeuralNetwork(nb_units=100, nb_it=10000, output='softmax', opt=GradientDescent(alpha=0.001))
+        nn.fit(X_norm, y)
+
+        assert np.sum(nn.costs[1:] >= nn.costs[:-1]) == 0
