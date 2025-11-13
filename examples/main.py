@@ -4,15 +4,13 @@ sys.path.append('src')
 from data_tsunami import load_data_tsunami
 from data_spiral import generate_spiral
 from visualisation import visualize_classifier
-from splitter import transform_to_numpy
 from scaler import Scaler
 from neural_network import NeuralNetwork
 from optimizers import GradientDescent, AdamOptimizer
 import numpy as np
 
 # load tsunami data
-data, features, target = load_data_tsunami()
-X, y = transform_to_numpy(data, features, target)
+X, y = load_data_tsunami()
 
 # load spiral data
 #X, y = generate_spiral(n=100, k=3, visual=True)

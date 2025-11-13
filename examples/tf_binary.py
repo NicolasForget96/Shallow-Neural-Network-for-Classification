@@ -1,8 +1,8 @@
 import sys
 sys.path.append('src')
 
-from parser import load_data_tsunami
-from data_generetor import generate_spiral
+from data_tsunami import load_data_tsunami
+from data_spiral import generate_spiral
 from visualisation import visualize_tensorflow_classifier
 from splitter import transform_to_numpy
 from encoding import one_hot_decode
@@ -11,9 +11,6 @@ import tensorflow as tf
 from keras import Sequential
 from keras.layers import Dense
 from keras.losses import BinaryCrossentropy
-#from tf_keras import Sequential
-#from tf_keras.layers import Dense
-#from tf_keras.losses import BinaryCrossentropy
 import numpy as np
 
 from sklearn.preprocessing import StandardScaler

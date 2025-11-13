@@ -12,8 +12,9 @@ import geodatasets
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+from splitter import transform_to_numpy
 
-def load_data_tsunami():
+def load_data_tsunami(as_numpy=True):
     # Download latest dataset version
     folder = kagglehub.dataset_download("ahmeduzaki/global-earthquake-tsunami-risk-assessment-dataset")
     file = listdir(folder)[0]
@@ -39,7 +40,10 @@ def load_data_tsunami():
 
     #data = data.iloc[0:100]
 
-    return data, features, target
+    if as_numpy:
+        return transform_to_numpy(data, features, target)
+    else:
+        return data, features, target
 
 def plot_world_map(data):
     geometry = [Point(z) for z in zip(data['longitude'], data['latitude'])]
@@ -62,7 +66,7 @@ def plot_features_vs_target(data, features, target):
     plt.show()
 
 if __name__ == "__main__":
-    data, features, target = load_data_tsunami()
+    data, features, target = load_data_tsunami(as_numpy=False)
     data.info()
     print(data.head())
 

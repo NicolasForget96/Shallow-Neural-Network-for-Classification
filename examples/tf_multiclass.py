@@ -1,8 +1,8 @@
 import sys
 sys.path.append('src')
 
-from parser import load_data_tsunami
-from data_generetor import generate_spiral
+from data_tsunami import load_data_tsunami
+from data_spiral import generate_spiral
 from visualisation import visualize_tensorflow_classifier
 from splitter import transform_to_numpy
 from encoding import one_hot_decode

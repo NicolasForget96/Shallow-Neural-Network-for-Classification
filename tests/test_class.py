@@ -3,8 +3,8 @@ import sys
 sys.path.append('src')
 sys.path.append('examples')
 
-from parser import load_data_tsunami
-from data_generetor import generate_spiral
+from data_tsunami import load_data_tsunami
+from data_spiral import generate_spiral
 from visualisation import visualize_classifier
 from splitter import transform_to_numpy
 from scaler import Scaler
