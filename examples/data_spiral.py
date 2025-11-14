@@ -5,12 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from encoding import one_hot_encode
 
-# data generator from https://cs231n.github.io/neural-networks-case-study
-# n : number of points per class
-# d : dimension of points
-# k : number of classes (has to be 2 here because binary classification)
 
 def generate_spiral(n=100, d=2, k=2, visual=False):
+
+    '''
+    data generator from https://cs231n.github.io/neural-networks-case-study
+    - n : number of points per class
+    - d : dimension of points
+    - k : number of classes (has to be 2 here because binary classification)
+    '''
 
     X = np.zeros((n*k, d))
     y = np.zeros(n*k)

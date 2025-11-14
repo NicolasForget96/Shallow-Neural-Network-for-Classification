@@ -95,7 +95,9 @@ def expe_hidden_units(test_size, X_train, y_train, X_test, y_test, nb_iterations
         J_test[i] = neural_network.get_accuracy(Xn_test, y_test)
 
     plt.figure()
-    plt.plot(test_size, J_train, c='blue')
-    plt.plot(test_size, J_test, c='red')
+    plt.plot(test_size, J_train, c='blue', label='Training set')
+    plt.plot(test_size, J_test, c='red', label='Test set')
+    plt.title('Accuracy in function of the number of units in the hidden layer')
+    plt.ylim(0, 105)
     plt.legend()
     plt.show()

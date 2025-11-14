@@ -39,7 +39,7 @@ def split_train_test_validation(X, y, split_test=0.2, split_validation=0.2):
     index_start_test = ceil((1 - split_test - split_validation) * m)
     index_start_validation = ceil((1 - split_validation) * m)
     perm_train = permutation[:index_start_test]
-    perm_test = permutation[:index_start_test:index_start_validation]
+    perm_test = permutation[index_start_test:index_start_validation]
     perm_validation = permutation[index_start_validation:]
 
     X_train, y_train = X[perm_train], y[perm_train]
