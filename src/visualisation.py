@@ -89,6 +89,7 @@ def expe_hidden_units(test_size, X_train, y_train, X_test, y_test, nb_iterations
     Xn_test = sclr.transform(X_test)
 
     for i, units in enumerate(test_size):
+        print(f'\n ---------------------------------------- \n Testing {units} units\n')
         neural_network = NeuralNetwork(nb_units=units, nb_it=nb_iterations, output='softmax', opt=AdamOptimizer())
         neural_network.fit(Xn_train, y_train)
         J_train[i] = neural_network.get_accuracy(Xn_train, y_train)
