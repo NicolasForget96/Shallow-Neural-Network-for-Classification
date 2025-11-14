@@ -4,9 +4,6 @@ sys.path.append('src')
 sys.path.append('examples')
 
 from data_tsunami import load_data_tsunami
-from data_spiral import generate_spiral
-from visualisation import visualize_classifier
-from splitter import transform_to_numpy
 from scaler import Scaler
 from neural_network import NeuralNetwork
 from optimizers import GradientDescent, AdamOptimizer
@@ -14,8 +11,7 @@ import numpy as np
 
 class TestClass:
     def test_final_cost(self):
-        data, features, target = load_data_tsunami()
-        X, y = transform_to_numpy(data, features, target)
+        X, y = load_data_tsunami()
 
         sclr = Scaler()
         sclr.fit(X)
@@ -30,8 +26,7 @@ class TestClass:
 
 
     def test_decreasing_costs_GD(self):
-        data, features, target = load_data_tsunami()
-        X, y = transform_to_numpy(data, features, target)
+        X, y = load_data_tsunami()
 
         sclr = Scaler()
         sclr.fit(X)
@@ -44,8 +39,7 @@ class TestClass:
 
 
     def test_final_cost_ADAM(self):
-        data, features, target = load_data_tsunami()
-        X, y = transform_to_numpy(data, features, target)
+        X, y = load_data_tsunami()
 
         sclr = Scaler()
         sclr.fit(X)
