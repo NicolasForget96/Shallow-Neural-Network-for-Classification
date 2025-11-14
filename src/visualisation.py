@@ -3,10 +3,18 @@ sys.path.append('src')
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+from scaler import Scaler
+from neural_network import NeuralNetwork
+from optimizers import AdamOptimizer
 from encoding import one_hot_decode
 
 
 def visualize_classifier(X, y, scaler, nn):
+
+    '''
+    X should not be normalized in the input
+    '''
 
     if X.shape[1] != 2:
         print(f'Cannot plot higher dimensional classifiers (2d max).')
@@ -60,4 +68,37 @@ def visualize_tensorflow_classifier(X, y, sclr, model):
     plt.scatter(X[:, 0], X[:, 1], c=y, s=40, edgecolors='black')
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
+    plt.show()
+
+
+def expe_hidden_units(test_size, X_train, y_train, X_test, y_test, nb_iterations=10000):
+    '''
+    Computes training vs test accuracy for various sizes of the hidden layer. No regularization.
+    
+    Input:
+    - test_size: vector of "# units in the hidden layer" to test
+    '''
+
+    s = len(test_size)
+    J_train = np.zeros(s)
+    J_test = np.zeros(s)
+
+    sclr = Scaler()
+    sclr.fit(X_train)
+    Xn_train = sclr.transform(X_train)
+    Xn_test = sclr.transform(X_test)
+
+    for i, units in enumerate(test_size):
+        print(f'\n ---------------------------------------- \n Testing {units} units\n')
+        neural_network = NeuralNetwork(nb_units=units, nb_it=nb_iterations, output='softmax', opt=AdamOptimizer())
+        neural_network.fit(Xn_train, y_train)
+        J_train[i] = neural_network.get_accuracy(Xn_train, y_train)
+        J_test[i] = neural_network.get_accuracy(Xn_test, y_test)
+
+    plt.figure()
+    plt.plot(test_size, J_train, c='blue', label='Training set')
+    plt.plot(test_size, J_test, c='red', label='Test set')
+    plt.title('Accuracy in function of the number of units in the hidden layer')
+    plt.ylim(0, 105)
+    plt.legend()
     plt.show()

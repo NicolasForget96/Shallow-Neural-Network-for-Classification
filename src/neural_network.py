@@ -132,7 +132,7 @@ class NeuralNetwork:
         error_count = np.sum(np.abs(y_pred_cl - y_cl))
         m = y.shape[0]
         accuracy = 100 * (m - error_count) / m
-        print(f'accuracy on this set: {accuracy:.2f} %')
+        print(f'accuracy: {accuracy:.2f} %')
         return accuracy
 
 
