@@ -8,6 +8,10 @@ from encoding import one_hot_decode
 
 def visualize_classifier(X, y, scaler, nn):
 
+    '''
+    X should not be normalized in the input
+    '''
+
     if X.shape[1] != 2:
         print(f'Cannot plot higher dimensional classifiers (2d max).')
         return
